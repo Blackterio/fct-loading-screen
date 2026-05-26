@@ -501,16 +501,12 @@
 
         async function fetchPlayerCount(maxplayers) {
             const workerUrl = SERVER_CONFIG.workerUrl + '?addr=' + encodeURIComponent(SERVER_CONFIG.ip);
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
             try {
-                const response = await fetch(workerUrl, { signal: controller.signal });
-                clearTimeout(timeoutId);
+                const response = await fetch(workerUrl);
                 const data = await response.json();
                 const players = data.players ?? '?';
                 document.getElementById('gameInfo').textContent = `${currentGamemode} · Jugadores: ${players}/${maxplayers}`;
             } catch (err) {
-                clearTimeout(timeoutId);
                 console.warn('fetchPlayerCount falló:', err.message);
             }
         }
