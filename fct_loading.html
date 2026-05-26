@@ -507,7 +507,7 @@
                 const response = await fetch(workerUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
                 const data = await response.json();
-                const players = data.response?.servers?.[0]?.players ?? '?';
+                const players = data.players ?? '?';
                 document.getElementById('gameInfo').textContent = `${currentGamemode} · Jugadores: ${players}/${maxplayers}`;
             } catch (err) {
                 clearTimeout(timeoutId);
