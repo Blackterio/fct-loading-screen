@@ -513,25 +513,22 @@
                         const players = data.players ?? '?';
                         el.textContent = currentGamemode + ' · Jugadores: ' + players + '/' + maxplayers;
                     } catch (e) {
-                        // DEBUG: visible en pantalla
-                        el.textContent = '[ERR-JSON] ' + xhr.responseText.slice(0, 60);
+                        console.warn('fetchPlayerCount: JSON inválido', xhr.responseText);
                     }
                 } else {
-                    // DEBUG: visible en pantalla
-                    el.textContent = '[ERR-HTTP ' + xhr.status + '] ' + xhr.responseText.slice(0, 60);
+                    console.warn('fetchPlayerCount: HTTP', xhr.status);
                 }
             };
 
             xhr.onerror = function() {
-                // DEBUG: visible en pantalla
-                el.textContent = '[ERR-XHR] No se pudo conectar al worker';
-            };
-
-            xhr.ontimeout = function() {
-                el.textContent = '[ERR-TIMEOUT]';
+                console.warn('fetchPlayerCount: XHR falló');
             };
 
             xhr.timeout = 8000;
+            xhr.ontimeout = function() {
+                console.warn('fetchPlayerCount: timeout');
+            };
+
             xhr.send();
         }
 
