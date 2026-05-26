@@ -499,16 +499,40 @@
             fetchPlayerCount(maxplayers);
         }
 
-        async function fetchPlayerCount(maxplayers) {
+        function fetchPlayerCount(maxplayers) {
             const workerUrl = SERVER_CONFIG.workerUrl + '?addr=' + encodeURIComponent(SERVER_CONFIG.ip);
-            try {
-                const response = await fetch(workerUrl);
-                const data = await response.json();
-                const players = data.players ?? '?';
-                document.getElementById('gameInfo').textContent = `${currentGamemode} · Jugadores: ${players}/${maxplayers}`;
-            } catch (err) {
-                console.warn('fetchPlayerCount falló:', err.message);
-            }
+            const el = document.getElementById('gameInfo');
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', workerUrl, true);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        const players = data.players ?? '?';
+                        el.textContent = currentGamemode + ' · Jugadores: ' + players + '/' + maxplayers;
+                    } catch (e) {
+                        // DEBUG: visible en pantalla
+                        el.textContent = '[ERR-JSON] ' + xhr.responseText.slice(0, 60);
+                    }
+                } else {
+                    // DEBUG: visible en pantalla
+                    el.textContent = '[ERR-HTTP ' + xhr.status + '] ' + xhr.responseText.slice(0, 60);
+                }
+            };
+
+            xhr.onerror = function() {
+                // DEBUG: visible en pantalla
+                el.textContent = '[ERR-XHR] No se pudo conectar al worker';
+            };
+
+            xhr.ontimeout = function() {
+                el.textContent = '[ERR-TIMEOUT]';
+            };
+
+            xhr.timeout = 8000;
+            xhr.send();
         }
 
         // ========== INICIALIZACIÓN ==========
