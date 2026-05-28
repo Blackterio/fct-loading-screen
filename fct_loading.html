@@ -533,6 +533,18 @@
         }
 
         // ========== INICIALIZACIÓN ==========
+
+        // Fondo aleatorio inmediato — sin pantalla negra al cargar
+        (function() {
+            const idx = Math.floor(Math.random() * images.length);
+            const container = document.getElementById('slideshow');
+            if (container) {
+                container.style.backgroundImage = 'url(' + images[idx] + ')';
+                container.style.backgroundSize = 'cover';
+                container.style.backgroundPosition = 'center';
+            }
+        })();
+
         window.addEventListener('load', () => {
             initSlideshow();
             updateProgress();
